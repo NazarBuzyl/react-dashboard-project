@@ -16,7 +16,7 @@ import {
   stackedPrimaryYAxis,
 } from "../../data/dummy";
 
-const Stacked = ({ width, height }) => {
+const Stacked = ({ width, height, bgColor }) => {
   return (
     <ChartComponent
       id="stack chart"
