@@ -15,9 +15,30 @@ const ThemeSettings = () => {
     setActiveThemeSettings,
   } = useStateContext();
 
+  const themeSettingsRef = React.useRef(null);
+
+  React.useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        themeSettingsRef.current &&
+        !event.composedPath().includes(themeSettingsRef.current)
+      ) {
+        setActiveThemeSettings(false);
+      }
+    };
+
+    document.body.addEventListener("click", handleClickOutside);
+
+    return () => document.body.removeEventListener("click", handleClickOutside);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="bg-half-transparent w-screen fixed nav-item top-0 right-0">
-      <div className="float-right h-screen dark:text-gray-200 bg-white dark:bg-secondary-dark-bg w-400">
+      <div
+        ref={themeSettingsRef}
+        className="float-right h-screen dark:text-gray-200 bg-white dark:bg-secondary-dark-bg w-400"
+      >
         <div className="flex justify-between items-center p-4 ml-4">
           <p className="font-semibold text-xl">Setting</p>
           <button

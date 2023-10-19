@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React from "react";
 import { AiOutlineMenu } from "react-icons/ai";
 import { FiShoppingCart } from "react-icons/fi";
@@ -32,14 +33,15 @@ const Navbar = () => {
   const {
     activeMenu,
     setActiveMenu,
-    isClick,
-    setIsClick,
-    handleClick,
     screenSize,
     setScreenSize,
     currentColor,
+    openElements,
+    addElement,
+    closeElement,
   } = useStateContext();
 
+  // ---------------------------------------------------------------- Menu
   React.useEffect(() => {
     const handleResize = () => setScreenSize(window.innerWidth);
 
@@ -58,11 +60,20 @@ const Navbar = () => {
     }
   }, [screenSize]);
 
+  // ---------------------------------------------------------------- Another windows
+  const handleClick = (elementId) => {
+    if (!openElements.includes(elementId)) {
+      addElement(elementId);
+    } else {
+      closeElement(elementId);
+    }
+  };
+
   return (
     <div className="flex justify-between p-2 md:ml-6 md:mr-6 relative">
       <NavButton
         title="Menu"
-        customFunc={() => setActiveMenu((prevActiveMenu) => !prevActiveMenu)}
+        customFunc={() => setActiveMenu(!activeMenu)}
         color={currentColor}
         icon={<AiOutlineMenu />}
       />
@@ -94,19 +105,19 @@ const Navbar = () => {
           >
             <img className="rounded-full w-8 h-8" src={avatar} alt="avatar" />
             <p>
-              <span className="text-gray-400 text-14">Hi, </span>{" "}
+              <span className="text-gray-400 text-14">Hi, </span>
               <span className="text-gray-400 font-bold ml-1 text-14">
-                Nazar
+                Michael
               </span>
             </p>
             <MdKeyboardArrowDown className="text-gray-400 text-14" />
           </div>
         </TooltipComponent>
 
-        {isClick.cart && <Cart />}
-        {isClick.chat && <Chat />}
-        {isClick.notification && <Notification />}
-        {isClick.userProfile && <UserProfile />}
+        {openElements.includes("cart") && <Cart />}
+        {openElements.includes("chat") && <Chat />}
+        {openElements.includes("notification") && <Notification />}
+        {openElements.includes("userProfile") && <UserProfile />}
       </div>
     </div>
   );

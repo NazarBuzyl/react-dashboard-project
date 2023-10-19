@@ -2,21 +2,43 @@ import React, { createContext } from "react";
 
 const StateContext = createContext();
 
-const initialstate = {
-  chat: false,
-  cart: false,
-  userProfile: false,
-  notification: false,
-};
-
 export const ContextProvider = ({ children }) => {
   const [activeMenu, setActiveMenu] = React.useState(true);
-  const [isClick, setIsClick] = React.useState(initialstate);
   const [screenSize, setScreenSize] = React.useState(undefined);
   const [currentColor, setCurrentColor] = React.useState("#1A97F5");
   const [currentMode, setCurrentMode] = React.useState("light");
   const [activeThemeSettings, setActiveThemeSettings] = React.useState(false);
+  const [openElements, setOpenElements] = React.useState([]);
 
+  // ----------------- Action for modal windows
+  const closeElement = (elementId) => {
+    setOpenElements((prevElements) =>
+      prevElements.filter((el) => el !== elementId)
+    );
+  };
+
+  const addElement = (elementId) => {
+    setOpenElements((prevElements) => [...prevElements, elementId]);
+  };
+
+  const handleClickOutside = (e) => {
+    openElements.forEach((elementId) => {
+      const element = document.getElementById(elementId);
+      if (element && !element.contains(e.target)) {
+        closeElement(elementId);
+      }
+    });
+  };
+
+  React.useEffect(() => {
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [openElements]);
+
+  // ----------------- MODE and COLOR
   const setMode = (e) => {
     setCurrentMode(e.target.value);
 
@@ -33,18 +55,11 @@ export const ContextProvider = ({ children }) => {
     setActiveThemeSettings(false);
   };
 
-  const handleCLick = (clicked) => {
-    setIsClick({ ...initialstate, [clicked]: true });
-  };
-
   return (
     <StateContext.Provider
       value={{
         activeMenu,
         setActiveMenu,
-        isClick,
-        setIsClick,
-        handleCLick,
         screenSize,
         setScreenSize,
         currentColor,
@@ -55,6 +70,10 @@ export const ContextProvider = ({ children }) => {
         setActiveThemeSettings,
         setColor,
         setMode,
+
+        openElements,
+        closeElement,
+        addElement,
       }}
     >
       {children}
